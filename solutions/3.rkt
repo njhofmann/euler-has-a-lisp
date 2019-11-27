@@ -1,10 +1,11 @@
+#lang racket
+(require math)
 
 (define (not-evenly-divides num factor)
   (not (evenly-divides num factor)))
 
 (define (evenly-divides num factor)
   (integer? (/ num factor)))
-
 
 (define (get-primes cutoff)
   (if (empty? cutoff)
@@ -13,7 +14,6 @@
           (get-primes (filter (lambda (x) 
                                 (not-evenly-divides x (first cutoff)))
                               (rest cutoff))))))
-
 
 (define (get-primes-less-than cutoff)
   (get-primes (range 2 (add1 cutoff))))
