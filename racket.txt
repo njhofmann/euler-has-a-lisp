@@ -1,0 +1,47 @@
+(define (fizz-mults end)
+  (sum
+    (filter (lambda (x) (or (equal? (modulo x 5) 0)
+                            (equal? (modulo x 3) 0)))
+            (stream->list (in-range end)))))
+
+(define (sum-of-even-fib-acc a b acc cutoff)
+  (let* ([new-b (+ a b)]
+         [new-acc (if (even? new-b) 
+                      (+ acc new-b)
+                       acc)])
+         (if (>= new-b cutoff) 
+             acc
+             (sum-of-even-fib-acc b new-b new-acc cutoff))))
+
+(define (sum-of-even-fibs cutoff)
+  (sum-of-even-fib-acc 1 2 2 cutoff))
+
+
+(define (not-evenly-divides num factor)
+  (not (evenly-divides num factor)))
+
+(define (evenly-divides num factor)
+  (integer? (/ num factor)))
+
+
+(define (get-primes cutoff)
+  (if (empty? cutoff)
+    '()
+    (cons (first cutoff) 
+          (get-primes (filter (lambda (x) 
+                                (not-evenly-divides x (first cutoff)))
+                              (rest cutoff))))))
+
+
+(define (get-primes-less-than cutoff)
+  (get-primes (range 2 (add1 cutoff))))
+
+(define (max-in-list values)
+  (apply max values))
+
+(define (get-largest-prime-factor num)
+  (max-in-list (filter (lambda (x) (evenly-divides num x)) (get-primes-less-than num))))
+
+
+(get-largest-prime-factor 600851475143)
+              
