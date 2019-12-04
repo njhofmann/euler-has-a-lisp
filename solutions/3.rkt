@@ -1,29 +1,31 @@
 #lang racket
 (require math)
+(require rackunit)
 
-(define (not-evenly-divides num factor)
-  (not (evenly-divides num factor)))
+(define (is-not-factor  num factor)
+  (not (is-factor num factor)))
 
-(define (evenly-divides num factor)
-  (integer? (/ num factor)))
+(define (is-factor num factor)
+  (equal? (modulo num factor) 0))
 
-(define (get-primes cutoff)
-  (if (empty? cutoff)
-    '()
-    (cons (first cutoff) 
-          (get-primes (filter (lambda (x) 
-                                (not-evenly-divides x (first cutoff)))
-                              (rest cutoff))))))
+(define (find-primes-acc num cur-val factors)
+  (cond
+    [(<= num cur-val) (cons num factors)]
+    [(is-factor num cur-val) (let* ([times (/ num cur-val)]
+                                   [more-factors (find-primes-acc cur-val 2 factors)])
+                               (find-primes-acc times 2 more-factors))]
+    [else (find-primes-acc num (add1 cur-val) factors)]))
 
-(define (get-primes-less-than cutoff)
-  (get-primes (range 2 (add1 cutoff))))
+(define (find-primes num)
+  (find-primes-acc num 2 '()))
 
 (define (max-in-list values)
   (apply max values))
 
 (define (get-largest-prime-factor num)
-  (max-in-list (filter (lambda (x) (evenly-divides num x)) (get-primes-less-than num))))
+  (max-in-list (find-primes num)))
 
-
-(get-largest-prime-factor 600851475143)
+(check-eq? (get-largest-prime-factor 100) 5)
+(check-eq? (get-largest-prime-factor 71) 71)
+(check-eq? (get-largest-prime-factor 600851475143) 6857)
               
